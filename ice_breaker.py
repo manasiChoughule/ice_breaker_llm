@@ -5,11 +5,12 @@ from langchain.chains import LLMChain
 from output_parsers import person_intel_parser, PersonIntel
 from third_parties.linkedin import scrape_linkedin_profile
 from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
+from typing import Tuple
 
 
-def ice_break(name: str) -> PersonIntel:
+def ice_break(name: str) -> Tuple[PersonIntel, str]:
     linkedin_profile_url = linkedin_lookup_agent(name="Eden Marco Udemy")
-    summary_template = """
+    summary_template = """ 
             Given the information {information} about a person from I want you to create:
             1. a short summary
             2. two interesting facts about them
@@ -34,7 +35,7 @@ def ice_break(name: str) -> PersonIntel:
 
     result = chain.run(information=linkedin_data)
     print(result)
-    return person_intel_parser.parse(result)
+    return person_intel_parser.parse(result), linkedin_data.get("profile_pic_url")
 
 
 if __name__ == "__main__":
